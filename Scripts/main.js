@@ -9,15 +9,12 @@ const conversions={
     "lBracket":"(",
     "rBracket":")",
     "pow":"^",
-    "sqrt":"sqrt("
-}
-const NonVisibleConversions={
-    "sqrt":"Math.sqrt",
-    "^":"**",
-    "sin":"math.sin",
-    "cos":"Math.cos",
-    "tan":"Math.tan"
-
+    "sqrt":"sqrt(",
+    "sin":"sin(",
+    "cos":"cos(",
+    "tan":"tan(",
+    "log":"log(",
+    "ln":"ln("
 }
 
 const WriteLoc=document.getElementById("screen");
@@ -41,6 +38,11 @@ const buttonLBracket=document.getElementById("lBracket");
 const buttonRBracket=document.getElementById("rBracket");
 const buttonPow=document.getElementById("pow");
 const buttonSqrt=document.getElementById("sqrt");
+const buttonSin=document.getElementById("sin");
+const buttonCos=document.getElementById("cos");
+const buttonTan=document.getElementById("tan");
+const buttonLog=document.getElementById("log");
+const buttonLn=document.getElementById("ln");
 
 button0.addEventListener("click",WriteNumToScreen);
 button1.addEventListener("click",WriteNumToScreen);
@@ -60,6 +62,12 @@ buttonLBracket.addEventListener('click',WriteNumToScreen);
 buttonRBracket.addEventListener('click',WriteNumToScreen);
 buttonPow.addEventListener('click',WriteNumToScreen);
 buttonSqrt.addEventListener('click',WriteNumToScreen)
+buttonSin.addEventListener("click", WriteNumToScreen);
+buttonCos.addEventListener("click", WriteNumToScreen);
+buttonTan.addEventListener("click", WriteNumToScreen);
+buttonLog.addEventListener("click", WriteNumToScreen);
+buttonLn.addEventListener("click", WriteNumToScreen);
+
 
 document.addEventListener('keydown',checkKey)
 buttonEquals.addEventListener("click",Calculate);
@@ -145,12 +153,17 @@ function cleanUpEquation(exp){
     const parentheses=["(",")"];
     const Remove=["", " "];
     let result='';
+    let prev=""
     for (const curr of exp){
+        if(curr=="(" && !isNaN(prev)){
+            result+=` * ${curr} `;
+        }
         if(operators.includes(curr) || parentheses.includes(curr)){
             result+=` ${curr} `;
         }else{
             result+=curr;
         }
+        prev=curr;
     }
     let retArray=result.split(" ");
     retArray =retArray.filter(item => !Remove.includes(item));
@@ -199,8 +212,8 @@ function twoValCalc(partial_exp){
 }
 
 function singleValCalc(partial_exp){
-    const operator=parseFloat(partial_exp[0]);
-    const num=partial_exp[1];
+    const num=parseFloat(partial_exp[1]);
+    const operator=partial_exp[0];
     let retVal=0
     let error="null"
     switch (operator){
@@ -230,6 +243,14 @@ function singleValCalc(partial_exp){
                 retVal = Math.log10(num);
             }else{
                 error="Error: Invalid Value";
+            }
+            break;
+        case "sqrt":
+            if(num<0){
+                error="Error: Invalue";
+
+            }else{
+                retVal=Math.sqrt(num);
             }
             break;
         default:
@@ -283,7 +304,9 @@ function calcWithBrackets(equation){
     if (equation.length<2){
         return equation;
     }
-
+    if(!equation.includes("(")){
+        return(CaclNoBrackets(equation)[0]);
+    }
     //find the innermost brackets
     let leftBrackPos=-1;
     let rightBracketPos=-1;
@@ -351,6 +374,14 @@ function handleSpecialOperators(equation){
 
     let newEquation=equation.slice(leftIndex+1,rightIndex);
     newEquation=calcWithBrackets(newEquation);
+    let newEquationArray=[equation[index],newEquation];
+    const output=singleValCalc(newEquationArray);
+    let finalEquation=equation.slice(0,index);
+    finalEquation.push(output);
+    finalEquation=finalEquation.concat(equation.slice(rightIndex+1,equation.length));
+    equation=finalEquation;
+
+    return(handleSpecialOperators(equation));
 
 
 
@@ -363,12 +394,8 @@ function Calculate(){
     if(checkBalanced(expression)){
         eqs=cleanUpEquation(expression);
         if(eqs.length>2){
-            if(!eqs.includes("(")) {//handles simplest case of no brackets
-                WriteLoc.value=CaclNoBrackets(eqs);
-            }else{
-                handleSpecialOperators(eqs);
-                WriteLoc.value=calcWithBrackets(eqs);
-            }
+            eqs=handleSpecialOperators(eqs);
+            WriteLoc.value=calcWithBrackets(eqs);
         }
     
 
