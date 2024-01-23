@@ -90,7 +90,6 @@ const keyToEvent = {
 
 
 function checkKey(e){
-    console.log(e.key)
     if(e.key in keyToEvent){
         keyToEvent[e.key].click();
     }
@@ -201,7 +200,7 @@ function twoValCalc(partial_exp){
 
 function singleValCalc(partial_exp){
     const operator=parseFloat(partial_exp[0]);
-    const num=partial_exp[2];
+    const num=partial_exp[1];
     let retVal=0
     let error="null"
     switch (operator){
@@ -246,28 +245,10 @@ function singleValCalc(partial_exp){
     
 
 }
-// function bracketCalculation(equation){
-//     if(equation.length==1){
-//         return equation;
-//     }
-
-//     let startPos=-1;
-//     let endPos=-1;
-//     for(let i=0;i<equation.length;i++){
-//         if(equation[i]=="("){
-//             startPos=i;
-//         }else if(equation==")" && startPos!=-1){
-//             endPos=i;
-//             break;
-//         }
-//     }
-
-// }
 
 function CaclNoBrackets(equation){
-operations=["/","*","+","-"];
+operations=["/","^","*","+","-"];
 for (let operationVal=0;operationVal<operations.length;operationVal++){
-    console.log(operations[operationVal])
     if(equation.includes(operations[operationVal])){
         if(equation.length==1){
             return(equation);
@@ -276,11 +257,14 @@ for (let operationVal=0;operationVal<operations.length;operationVal++){
             if(equation[i]==operations[operationVal]){
                 tempList=[equation[i-1],equation[i],equation[i+1]];
                 Solved=twoValCalc(tempList);
-                console.log(Solved);
                 if(Solved.includes("Error")){
                     equation=[Solved];
                 }else{
-                    equation.splice(i-1,4,Solved);
+                    let newEquation=equation.slice(0,i-1);
+                    newEquation.push(Solved);
+                    newEquation=newEquation.concat(equation.slice(i+2,equation.length));
+                    equation=newEquation;
+                    i--;
                 }
             }
         }
@@ -294,14 +278,97 @@ return equation;
 
 }
 
+function calcWithBrackets(equation){
 
+    if (equation.length<2){
+        return equation;
+    }
+
+    //find the innermost brackets
+    let leftBrackPos=-1;
+    let rightBracketPos=-1;
+    for(let i=0;i<equation.length;i++){
+        if(equation[i]=="("){
+            leftBrackPos=i;
+        }else if(equation[i]==")" && leftBrackPos!=-1){
+            rightBracketPos=i;
+            break;
+        }
+    }
+        if(rightBracketPos-leftBrackPos==2){
+            let newEquation=equation.slice(0,leftBrackPos-1);
+            newEquation.push(equation[rightBracketPos-1]);
+            newEquation=newEquation.concat(equation.slice(rightBracketPos+1,equation.length));
+            equation=newEquation;
+
+        }else{
+        let smallerEquation=equation.slice(leftBrackPos+1,rightBracketPos);
+        let solved=CaclNoBrackets(smallerEquation);
+        let newEquation=equation.slice(0,leftBrackPos);
+        newEquation.push(solved[0]);
+        newEquation=newEquation.concat(equation.slice(rightBracketPos+1,equation.length));
+        equation=newEquation;
+        }
+    if(equation.includes("(")){
+        return(calcWithBrackets(equation));
+    }else{
+        let solved=CaclNoBrackets(equation);
+        return(solved[0]);
+    }
+
+}
+
+function handleSpecialOperators(equation){
+    operators=["sin","cos","tan","log","ln","sqrt"]
+    if(!operators.some(element => equation.includes(element))){
+        return(equation);
+    }
+
+    index=-1;
+    //find right most special operator
+    for(let i=equation.length-1 ;i>=0;i--){
+        if(operators.includes(equation[i])){
+            index=i;
+            break;
+        }
+    }
+
+    const leftIndex=index+1;
+    let rightIndex=-1;
+    let leftCount=1;
+    let rightCount=0;
+    for(let i=leftIndex+1;i<equation.length;i++){
+        if(equation[i]=="("){
+            leftCount++;
+        }else if(equation[i]==")"){
+            rightIndex=i;
+            rightCount++;
+        }
+        if(rightCount==leftCount){
+            break;
+        }
+    }
+
+    let newEquation=equation.slice(leftIndex+1,rightIndex);
+    newEquation=calcWithBrackets(newEquation);
+
+
+
+
+
+
+}
 function Calculate(){
     expression=WriteLoc.value;
     if(checkBalanced(expression)){
         eqs=cleanUpEquation(expression);
         if(eqs.length>2){
-            if(!eqs.includes("(")) //handles simplest case of no brackets
-            WriteLoc.value=CaclNoBrackets(eqs);
+            if(!eqs.includes("(")) {//handles simplest case of no brackets
+                WriteLoc.value=CaclNoBrackets(eqs);
+            }else{
+                handleSpecialOperators(eqs);
+                WriteLoc.value=calcWithBrackets(eqs);
+            }
         }
     
 
