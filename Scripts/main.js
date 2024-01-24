@@ -230,16 +230,16 @@ function singleValCalc(partial_exp){
     let error="null"
     switch (operator){
         case "sin":
-            retVal=Math.sin(num);
+            retVal=Math.sin((num*Math.PI)/180);
             break;
         case "cos":
-            retVal = Math.cos(num);
+            retVal = Math.cos((num*Math.PI)/180);
             break;
         case "tan":
             if(num%90==0){
                 error="Error: Invalid Value";
             }else{
-            retVal = Math.tan(num);
+            retVal = Math.tan((num*Math.PI)/180);
             }
             break;
         case "ln":
@@ -319,7 +319,6 @@ function calcWithBrackets(equation){
     if(!equation.includes("(")){
         return(CaclNoBrackets(equation)[0]);
     }
-    //find the innermost brackets
     let leftBrackPos=-1;
     let rightBracketPos=-1;
     for(let i=0;i<equation.length;i++){
