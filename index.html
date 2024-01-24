@@ -16,44 +16,45 @@
 
         <div></div>
         <div></div>
-        <button type="button" id="undo">←</button>
+        <button type="button" id="undo" onclick="Undo()">←</button>
 
-
-        <button type="button" id="1">1</button>
-        <button type="button" id="2">2</button>
-        <button type="button" id="3">3</button>
-
-        <button type="button" id="4">4</button>
-        <button type="button" id="5">5</button>
-        <button type="button" id="6">6</button>
-
-        <button type="button" id="7">7</button>
-        <button type="button" id="8">8</button>
-        <button type="button" id="9">9</button>
-
-        <button type="button" id="decimal">.</button>
-        <button type="button" id="0" name="0">0</button>
-        <button type="button" id="equals">=</button>
-
-        <button type="button" id="plus">+</button>
-        <button type="button" id="sub">—</button>
-        <button type="button" id="mult">*</button>
-        <button type="button" id="div">/</button>
-
-        <button type="button" id="lBracket">(</button>
-        <button type="button" id="rBracket">)</button>
-        <button type="button" id="pow">^</button>
-
-        <button type="button" id="sqrt">sqrt</button>
-        <button type="button" id="sin">sin</button>
-        <button type="button" id="cos">cos</button>
-
-        <button type="button" id="tan">tan</button>
-        <button type="button" id="neg">negative</button>
-        <button type="button" id="ln">ln</button>
-
+        <button type="button" id="1" onclick="WriteNumToScreen('1')">1</button>
+        <button type="button" id="2" onclick="WriteNumToScreen('2')">2</button>
+        <button type="button" id="3" onclick="WriteNumToScreen('3')">3</button>
+        
+        <button type="button" id="4" onclick="WriteNumToScreen('4')">4</button>
+        <button type="button" id="5" onclick="WriteNumToScreen('5')">5</button>
+        <button type="button" id="6" onclick="WriteNumToScreen('6')">6</button>
+        
+        <button type="button" id="7" onclick="WriteNumToScreen('7')">7</button>
+        <button type="button" id="8" onclick="WriteNumToScreen('8')">8</button>
+        <button type="button" id="9" onclick="WriteNumToScreen('9')">9</button>
+        
+        <button type="button" id="decimal" onclick="WriteNumToScreen('decimal')">.</button>
+        <button type="button" id="0" onclick="WriteNumToScreen('0')">0</button>
+        <button type="button" id="equals" onclick="Calculate()">=</button>
+        
+        <button type="button" id="plus" onclick="WriteNumToScreen('plus')">+</button>
+        <button type="button" id="sub" onclick="WriteNumToScreen('sub')">—</button>
+        <button type="button" id="mult" onclick="WriteNumToScreen('mult')">*</button>
+        <button type="button" id="div" onclick="WriteNumToScreen('div')">/</button>
+        
+        <button type="button" id="lBracket" onclick="WriteNumToScreen('lBracket')">(</button>
+        <button type="button" id="rBracket" onclick="WriteNumToScreen('rBracket')">)</button>
+        <button type="button" id="pow" onclick="WriteNumToScreen('pow')">^</button>
+        
+        <button type="button" id="sqrt" onclick="WriteNumToScreen('sqrt')">sqrt</button>
+        <button type="button" id="sin" onclick="WriteNumToScreen('sin')">sin</button>
+        <button type="button" id="cos" onclick="WriteNumToScreen('cos')">cos</button>
+        
+        <button type="button" id="tan" onclick="WriteNumToScreen('tan')">tan</button>
+        <button type="button" id="neg" onclick="WriteNumToScreen('neg')">negative</button>
+        <button type="button" id="ln" onclick="WriteNumToScreen('ln')">ln</button>
+        
         <div></div>
-        <button type="button" id="log">log</button>
+        <button type="button" id="log" onclick="WriteNumToScreen('log')">log</button>
+        
+        
 
         <p></p>
         <p></p>

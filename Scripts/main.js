@@ -1,3 +1,4 @@
+"use strict";
 let CompletedCalc=false
 const CheckVals=["+","—","*","/","^","sqrt","(",")","sin","cos","tan"]
 const checkInvis=["sqrt","^","sin","cos","tan"]
@@ -20,123 +21,75 @@ const conversions={
 }
 
 const WriteLoc=document.getElementById("screen");
-const button0=document.getElementById("0");
-const button1=document.getElementById("1");
-const button2=document.getElementById("2");
-const button3=document.getElementById("3");
-const button4=document.getElementById("4");
-const button5=document.getElementById("5");
-const button6=document.getElementById("6");
-const button7=document.getElementById("7");
-const button8=document.getElementById("8");
-const button9=document.getElementById("9");
-const buttonPlus=document.getElementById("plus");
-const buttonEquals=document.getElementById("equals");
-const buttonSub=document.getElementById('sub');
-const buttonMult=document.getElementById('mult');
-const buttonDiv=document.getElementById("div");
-const buttonUndo=document.getElementById("undo");
-const buttonLBracket=document.getElementById("lBracket");
-const buttonRBracket=document.getElementById("rBracket");
-const buttonPow=document.getElementById("pow");
-const buttonSqrt=document.getElementById("sqrt");
-const buttonSin=document.getElementById("sin");
-const buttonCos=document.getElementById("cos");
-const buttonTan=document.getElementById("tan");
-const buttonLog=document.getElementById("log");
-const buttonLn=document.getElementById("ln");
-const buttonNeg=document.getElementById("neg")
-const buttonDeci=document.getElementById("decimal");
-
-button0.addEventListener("click",WriteNumToScreen);
-button1.addEventListener("click",WriteNumToScreen);
-button2.addEventListener("click",WriteNumToScreen);
-button3.addEventListener("click",WriteNumToScreen);
-button4.addEventListener("click",WriteNumToScreen);
-button5.addEventListener("click",WriteNumToScreen);
-button6.addEventListener("click",WriteNumToScreen);
-button7.addEventListener("click",WriteNumToScreen);
-button8.addEventListener("click",WriteNumToScreen);
-button9.addEventListener("click",WriteNumToScreen);
-buttonPlus.addEventListener("click",WriteNumToScreen);
-buttonSub.addEventListener('click',WriteNumToScreen);
-buttonDiv.addEventListener('click',WriteNumToScreen);
-buttonMult.addEventListener('click',WriteNumToScreen);
-buttonLBracket.addEventListener('click',WriteNumToScreen);
-buttonRBracket.addEventListener('click',WriteNumToScreen);
-buttonPow.addEventListener('click',WriteNumToScreen);
-buttonSqrt.addEventListener('click',WriteNumToScreen)
-buttonSin.addEventListener("click", WriteNumToScreen);
-buttonCos.addEventListener("click", WriteNumToScreen);
-buttonTan.addEventListener("click", WriteNumToScreen);
-buttonLog.addEventListener("click", WriteNumToScreen);
-buttonLn.addEventListener("click", WriteNumToScreen);
-buttonNeg.addEventListener("click",WriteNumToScreen);
-buttonDeci.addEventListener("click",WriteNumToScreen)
-
 
 document.addEventListener('keydown',checkKey)
-buttonEquals.addEventListener("click",Calculate);
-buttonUndo.addEventListener('click',Undo);
 
-const keyToEvent = {
-    '0': button0,
-    '1': button1,
-    '2': button2,
-    '3': button3,
-    '4': button4,
-    '5': button5,
-    '6': button6,
-    '7': button7,
-    '8': button8,
-    '9': button9,
-    "+": buttonPlus,
-    "=":buttonEquals,
-    "-":buttonSub,
-    "/":buttonDiv,
-    "(":buttonLBracket,
-    ")":buttonRBracket,
-    "Backspace":buttonUndo,
-    "Enter":buttonEquals,
-    "^":buttonPow,
-    ".":buttonDeci,
-    "*":buttonMult,
-    "n":buttonNeg,
-    "N": buttonNeg,
-    "r":buttonSqrt,
-    "R":buttonSqrt,
-    "l":buttonLog,
-    "L":buttonLn
+const keyToID = {
+    '0': "0",
+    '1': "1",
+    '2': "2",
+    '3': "3",
+    '4': "4",
+    '5': "5",
+    '6': "6",
+    '7': "7",
+    '8': "8",
+    '9': "9",
+    "+": "plus",
+    "=":"equals",
+    "-":"sub",
+    "/":"div",
+    "(":"lBracket",
+    ")":"rBracket",
+    "Backspace":"undo",
+    "Enter":"equals",
+    "^":"pow",
+    ".":"decimal",
+    "*":"mult",
+    "n":"neg",
+    "N": "neg",
+    "r":"sqrt",
+    "R":"sqrt",
+    "l":"log",
+    "L":"ln",
+    "c":"cos",
+    "C":"cos",
+    "s":"sin",
+    "S":"sin",
+    "t":"tan",
+    "T":"tan"
 
 };
 
 
 
 function checkKey(e){
-    if(e.key in keyToEvent){
-        keyToEvent[e.key].click();
+    if(e.key in keyToID){
+        const btn=document.getElementById(keyToID[e.key]);
+        btn.click();
     }
 }
 function isNum(num){
     return(num>='0' && num<='9');
 }
-function WriteNumToScreen(){
+function WriteNumToScreen(buttonId){
+    const btn=document.getElementById(buttonId);
     if(CompletedCalc){
         WriteLoc.value="";
         CompletedCalc=false;
     }
-    if(isNum(this.id)){
-        WriteLoc.value+=this.id;
+    if(isNum(btn.id)){
+        WriteLoc.value+=btn.id;
     }
     else{
-        WriteLoc.value+=conversions[this.id];
+        WriteLoc.value+=conversions[btn.id];
     }
 }
 function Undo(){
     WriteLoc.value=WriteLoc.value.substring(0,WriteLoc.value.length-1);
 }
 function checkBalanced(str){
-    let stack=0
+    let stack=0;
     let ret=true;
     for (const char of str){
         if(char==="("){
@@ -151,14 +104,6 @@ function checkBalanced(str){
     return ret;
 }
 
-function invisibleConversions(exp){
-    for (const check of checkInvis){
-        if(exp.includes(check)){
-            exp=exp.replaceAll(check,NonVisibleConversions[check] );
-        }
-    }
-    return exp;
-}
 
 function cleanUpEquation(exp){
     const operators = ['+', '*', '/', "—",'^',"sin","cos","tan","sqrt"];
@@ -191,8 +136,8 @@ function twoValCalc(partial_exp){
     const num1=parseFloat(partial_exp[0]);
     const num2=parseFloat(partial_exp[2]);
     const operator=partial_exp[1];
-    let result=0
-    let error="null"
+    let result=0;
+    let error="null";
     switch (operator){
         case '+':
             result=(num1+num2);
@@ -215,19 +160,20 @@ function twoValCalc(partial_exp){
             break;
         default:
             error= "Error: Invalid Operator";
-        }
-        if(error!=="null"){
-            return(error);
-        }else{
+    }
+
+    if(error!=="null"){
+        return(error);
+    }else{
         return result.toString();
-        }
+    }
 }
 
 function singleValCalc(partial_exp){
     const num=parseFloat(partial_exp[1]);
     const operator=partial_exp[0];
-    let retVal=0
-    let error="null"
+    let retVal=0;
+    let error="null";
     switch (operator){
         case "sin":
             retVal=Math.sin((num*Math.PI)/180);
@@ -280,32 +226,32 @@ function singleValCalc(partial_exp){
 }
 
 function CaclNoBrackets(equation){
-operations=["/","^","*","+","—"];
-for (let operationVal=0;operationVal<operations.length;operationVal++){
-    if(equation.includes(operations[operationVal])){
-        if(equation.length==1){
-            return(equation);
-        }
-        for (let i=0;i<equation.length;i++){
-            if(equation[i]==operations[operationVal]){
-                tempList=[equation[i-1],equation[i],equation[i+1]];
-                Solved=twoValCalc(tempList);
-                if(Solved.includes("Error")){
-                    equation=[Solved];
-                }else{
-                    let newEquation=equation.slice(0,i-1);
-                    newEquation.push(Solved);
-                    newEquation=newEquation.concat(equation.slice(i+2,equation.length));
-                    equation=newEquation;
-                    i--;
+    const operations=["/","^","*","+","—"];
+    for (let operationVal=0;operationVal<operations.length;operationVal++){
+        if(equation.includes(operations[operationVal])){
+            if(equation.length==1){
+                return(equation);
+            }
+            for (let i=0;i<equation.length;i++){
+                if(equation[i]==operations[operationVal]){
+                    let tempList=[equation[i-1],equation[i],equation[i+1]];
+                    const Solved=twoValCalc(tempList);
+                    if(Solved.includes("Error")){
+                        equation=[Solved];
+                    }else{
+                        let newEquation=equation.slice(0,i-1);
+                        newEquation.push(Solved);
+                        newEquation=newEquation.concat(equation.slice(i+2,equation.length));
+                        equation=newEquation;
+                        i--;
+                    }
                 }
             }
+
         }
 
     }
-
-}
-return equation;
+    return equation;
 
 
 
@@ -341,7 +287,6 @@ function calcWithBrackets(equation){
         let solved=CaclNoBrackets(smallerEquation);
         let newEquation=equation.slice(0,leftBrackPos);
         newEquation.push(solved[0]);
-        console.log(rightBracketPos,equation);
         newEquation=newEquation.concat(equation.slice(rightBracketPos+1,equation.length));
         equation=newEquation;
         }
@@ -355,12 +300,12 @@ function calcWithBrackets(equation){
 }
 
 function handleSpecialOperators(equation){
-    operators=["sin","cos","tan","log","ln","sqrt"]
+    const operators=["sin","cos","tan","log","ln","sqrt"];
     if(!operators.some(element => equation.includes(element))){
         return(equation);
     }
 
-    index=-1;
+    let index=-1;
     for(let i=equation.length-1 ;i>=0;i--){
         if(operators.includes(equation[i])){
             index=i;
@@ -399,9 +344,9 @@ function handleSpecialOperators(equation){
 
 }
 function Calculate(){
-    expression=WriteLoc.value;
+    const expression=WriteLoc.value;
     if(checkBalanced(expression)){
-        eqs=cleanUpEquation(expression);
+        let eqs=cleanUpEquation(expression);
         if(eqs.length>2){
             eqs=handleSpecialOperators(eqs);
             WriteLoc.value=calcWithBrackets(eqs);
