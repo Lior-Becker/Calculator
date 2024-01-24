@@ -135,9 +135,6 @@ function WriteNumToScreen(){
 function Undo(){
     WriteLoc.value=WriteLoc.value.substring(0,WriteLoc.value.length-1);
 }
-function parse(str){
-    return Function(`'use strict'; return (${str})`)();
-}
 function checkBalanced(str){
     let stack=0
     let ret=true;
