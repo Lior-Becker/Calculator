@@ -1,9 +1,9 @@
 let CompletedCalc=false
-const CheckVals=["+","-","*","/","^","sqrt","(",")","sin","cos","tan"]
+const CheckVals=["+","—","*","/","^","sqrt","(",")","sin","cos","tan"]
 const checkInvis=["sqrt","^","sin","cos","tan"]
 const conversions={
     "plus":"+",
-    "sub":"-",
+    "sub":"—",
     "div":"/",
     "mult":"*",
     "lBracket":"(",
@@ -14,7 +14,9 @@ const conversions={
     "cos":"cos(",
     "tan":"tan(",
     "log":"log(",
-    "ln":"ln("
+    "ln":"ln(",
+    "neg":"-",
+    "decimal":"."
 }
 
 const WriteLoc=document.getElementById("screen");
@@ -43,6 +45,8 @@ const buttonCos=document.getElementById("cos");
 const buttonTan=document.getElementById("tan");
 const buttonLog=document.getElementById("log");
 const buttonLn=document.getElementById("ln");
+const buttonNeg=document.getElementById("neg")
+const buttonDeci=document.getElementById("decimal");
 
 button0.addEventListener("click",WriteNumToScreen);
 button1.addEventListener("click",WriteNumToScreen);
@@ -67,6 +71,8 @@ buttonCos.addEventListener("click", WriteNumToScreen);
 buttonTan.addEventListener("click", WriteNumToScreen);
 buttonLog.addEventListener("click", WriteNumToScreen);
 buttonLn.addEventListener("click", WriteNumToScreen);
+buttonNeg.addEventListener("click",WriteNumToScreen);
+buttonDeci.addEventListener("click",WriteNumToScreen)
 
 
 document.addEventListener('keydown',checkKey)
@@ -92,7 +98,16 @@ const keyToEvent = {
     ")":buttonRBracket,
     "Backspace":buttonUndo,
     "Enter":buttonEquals,
-    "^":buttonPow
+    "^":buttonPow,
+    ".":buttonDeci,
+    "*":buttonMult,
+    "n":buttonNeg,
+    "N": buttonNeg,
+    "r":buttonSqrt,
+    "R":buttonSqrt,
+    "l":buttonLog,
+    "L":buttonLn
+
 };
 
 
@@ -149,13 +164,13 @@ function invisibleConversions(exp){
 }
 
 function cleanUpEquation(exp){
-    const operators = ['+', '-', '*', '/', '^',"sin","cos","tan","sqrt"];
+    const operators = ['+', '*', '/', "—",'^',"sin","cos","tan","sqrt"];
     const parentheses=["(",")"];
     const Remove=["", " "];
     let result='';
     let prev=""
     for (const curr of exp){
-        if(curr=="(" && !isNaN(prev)){
+        if(curr=="(" && (prev>='0' && prev<='9')){
             result+=` * ${curr} `;
         }
         if(operators.includes(curr) || parentheses.includes(curr)){
@@ -185,7 +200,7 @@ function twoValCalc(partial_exp){
         case '+':
             result=(num1+num2);
             break;
-        case '-':
+        case '—':
             result=(num1-num2);
             break;
         case '*':
@@ -268,13 +283,13 @@ function singleValCalc(partial_exp){
 }
 
 function CaclNoBrackets(equation){
-operations=["/","^","*","+","-"];
+operations=["/","^","*","+","—"];
 for (let operationVal=0;operationVal<operations.length;operationVal++){
     if(equation.includes(operations[operationVal])){
         if(equation.length==1){
             return(equation);
         }
-        for (let i=0;i<equation.length;i++){ //the equation still has values in in, find
+        for (let i=0;i<equation.length;i++){
             if(equation[i]==operations[operationVal]){
                 tempList=[equation[i-1],equation[i],equation[i+1]];
                 Solved=twoValCalc(tempList);
@@ -321,6 +336,7 @@ function calcWithBrackets(equation){
         if(rightBracketPos-leftBrackPos==2){
             let newEquation=equation.slice(0,leftBrackPos-1);
             newEquation.push(equation[rightBracketPos-1]);
+            
             newEquation=newEquation.concat(equation.slice(rightBracketPos+1,equation.length));
             equation=newEquation;
 
@@ -329,6 +345,7 @@ function calcWithBrackets(equation){
         let solved=CaclNoBrackets(smallerEquation);
         let newEquation=equation.slice(0,leftBrackPos);
         newEquation.push(solved[0]);
+        console.log(rightBracketPos,equation);
         newEquation=newEquation.concat(equation.slice(rightBracketPos+1,equation.length));
         equation=newEquation;
         }
@@ -348,7 +365,6 @@ function handleSpecialOperators(equation){
     }
 
     index=-1;
-    //find right most special operator
     for(let i=equation.length-1 ;i>=0;i--){
         if(operators.includes(equation[i])){
             index=i;
@@ -385,9 +401,6 @@ function handleSpecialOperators(equation){
 
 
 
-
-
-
 }
 function Calculate(){
     expression=WriteLoc.value;
@@ -408,18 +421,3 @@ function Calculate(){
 
     CompletedCalc=true;
 }
-
-/*
-Note to self, to do the backspace better keep a tree of all buttons pressed and undo them in that order
-for now we are just removing the last element in the string
-
-make sure expression is valid
-add:
-sin
-cos
-tan
-log
-ln
-make it look pretty
-
-*/
