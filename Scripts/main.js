@@ -262,7 +262,7 @@ function singleValCalc(partial_exp){
             break;
         case "sqrt":
             if(num<0){
-                error="Error: Invalue";
+                error="Error: Invalid Value";
 
             }else{
                 retVal=Math.sqrt(num);
